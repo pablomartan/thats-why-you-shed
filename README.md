@@ -11,4 +11,4 @@ Under construction
 
 ## License
 Copyright © Pablo Martínez | All files in this repo are, if not otherwise
-explicitly stated, distributed under the [./LICENSE](GPL-3.0)
+explicitly stated, distributed under the [GPL-3.0 license](./LICENSE).
