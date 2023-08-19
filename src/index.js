@@ -14,7 +14,7 @@ const volumeUp = () => {
     beep_gain.gain.linearRampToValueAtTime(1, audio_context.currentTime + 0.1);
 };
 
-const click = () => {
+const tick = () => {
     volumeUp();
     volumeDown();
 };
@@ -27,16 +27,14 @@ let metronome;
 
 const startMetronome = () => {
     beep_gain.connect(audio_context.destination);
-    volumeUp();
-    volumeDown();
+    
+    tick();
 
     const bpm = parseFloat(60/bpm_input.value) * 1000;
     let i = 0;
 
     return setInterval(() => {
-        volumeUp();
-        volumeDown();
-        console.log('click nº ' + i++);
+        tick();
     }, bpm);
 };
 
@@ -45,5 +43,5 @@ const stopMetronome = () => {
     clearInterval(metronome);
 };
 
-play_button.addEventListener('click', () => { metronome = startMetronome(); });
-stop_button.addEventListener('click', () => { stopMetronome(); });
+play_button.addEventListener('tick', () => { metronome = startMetronome(); });
+stop_button.addEventListener('tick', () => { stopMetronome(); });
