@@ -14,6 +14,11 @@ const volumeUp = () => {
     beep_gain.gain.linearRampToValueAtTime(1, audio_context.currentTime + 0.1);
 };
 
+const click = () => {
+    volumeUp();
+    volumeDown();
+};
+
 beep.type = 'sine';
 beep.connect(beep_gain);
 beep.start();
