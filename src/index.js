@@ -1,25 +1,28 @@
-const bpm_input = Array.from(document.getElementsByTagName("input"))[0];
-const play_button = document.querySelector(".play-button");
-const stop_button = document.querySelector(".stop-button");
+const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
+const playButton = document.querySelector(".play-button");
+const stopButton = document.querySelector(".stop-button");
 
-const audio_context = new AudioContext();
-const beep = audio_context.createOscillator();
-const beep_gain = audio_context.createGain();
+const audioContext = new AudioContext();
+const oscillator = audioContext.createOscillator();
+const oscillatorGainNode = audioContext.createGain();
+
+oscillator.type = "sine";
 
 let beepStarted = false;
 let metronome;
 
-beep.type = "sine";
-
 const volumeDown = () => {
-  beep_gain.gain.exponentialRampToValueAtTime(
+  oscillatorGainNode.gain.exponentialRampToValueAtTime(
     0.0001,
-    audio_context.currentTime + 0.1,
+    audioContext.currentTime + 0.1,
   );
 };
 
 const volumeUp = () => {
-  beep_gain.gain.linearRampToValueAtTime(1, audio_context.currentTime + 0.1);
+  oscillatorGainNode.gain.linearRampToValueAtTime(
+    1,
+    audioContext.currentTime + 0.1,
+  );
 };
 
 const tick = () => {
@@ -29,16 +32,15 @@ const tick = () => {
 
 const startMetronome = () => {
   if (!beepStarted) {
-    beep.start();
+    oscillator.start();
     beepStarted = true;
   }
 
-  beep.connect(beep_gain);
-  beep_gain.connect(audio_context.destination);
+  oscillator.connect(oscillatorGainNode);
+  oscillatorGainNode.connect(audioContext.destination);
   tick();
 
-  const bpm = parseFloat(60 / bpm_input.value) * 1000;
-  let i = 0;
+  const bpm = parseFloat(60 / bpmInput.value) * 1000;
 
   return setInterval(() => {
     tick();
@@ -47,15 +49,15 @@ const startMetronome = () => {
 
 const stopMetronome = () => {
   clearInterval(metronome);
-  beep_gain.gain = 0;
-  beep_gain.disconnect();
+  oscillatorGainNode.gain = 0;
+  oscillatorGainNode.disconnect();
   metronome = undefined;
 };
 
-play_button.addEventListener("click", () => {
+playButton.addEventListener("click", () => {
   metronome = startMetronome();
 });
 
-stop_button.addEventListener("click", () => {
+stopButton.addEventListener("click", () => {
   stopMetronome();
 });
