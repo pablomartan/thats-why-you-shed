@@ -36,6 +36,10 @@ const startMetronome = () => {
     beepStarted = true;
   }
 
+  if (metronome) {
+    clearInterval(metronome);
+  }
+
   oscillator.connect(oscillatorGainNode);
   oscillatorGainNode.connect(audioContext.destination);
   tick();
