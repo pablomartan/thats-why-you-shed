@@ -1,5 +1,14 @@
+# os junk
 .DS_Store
-*.swp
+
+# node dev files
 node_modules
 dist
+.parcel*
 
+# text editor temp files
+*.swp
+
+# direnv files
+.envrc
+.direnv
