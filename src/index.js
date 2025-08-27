@@ -1,67 +1,48 @@
+import MetronomeAudio from "./audio-context";
+import { Metronome, TimeSignature } from "./metronome";
+
 const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
 const playButton = document.querySelector(".play-button");
 const stopButton = document.querySelector(".stop-button");
 
-const audioContext = new AudioContext();
-const oscillator = audioContext.createOscillator();
-const oscillatorGainNode = audioContext.createGain();
-
-oscillator.type = "sine";
-
-let beepStarted = false;
+let audioContext;
 let metronome;
 
-const volumeDown = () => {
-  oscillatorGainNode.gain.exponentialRampToValueAtTime(
-    0.0001,
-    audioContext.currentTime + 0.1,
-  );
+const init = () => {
+  const bpm = (60 / Number(bpmInput.value)) * 1000;
+  const metronomeAudio = new MetronomeAudio();
+  const newMetronome = new Metronome({
+    bpm,
+    timeSig: TimeSignature._44,
+    muteBars: 0,
+    tickFunction: () => {
+      metronomeAudio.tickSound();
+    },
+    startFunction: () => {
+      metronomeAudio.tickSound();
+    },
+    stopFunction: () => {
+      metronomeAudio.stop();
+    },
+  });
+
+  audioContext = metronomeAudio;
+  metronome = newMetronome;
 };
 
-const volumeUp = () => {
-  oscillatorGainNode.gain.linearRampToValueAtTime(
-    1,
-    audioContext.currentTime + 0.1,
-  );
-};
+if (playButton) {
+  playButton.addEventListener("click", () => {
+    init();
+    metronome.startMetronome();
+  });
+}
 
-const tick = () => {
-  volumeUp();
-  volumeDown();
-};
-
-const startMetronome = () => {
-  if (!beepStarted) {
-    oscillator.start();
-    beepStarted = true;
-  }
-
-  if (metronome) {
-    clearInterval(metronome);
-  }
-
-  oscillator.connect(oscillatorGainNode);
-  oscillatorGainNode.connect(audioContext.destination);
-  tick();
-
-  const bpm = parseFloat(60 / bpmInput.value) * 1000;
-
-  return setInterval(() => {
-    tick();
-  }, bpm);
-};
-
-const stopMetronome = () => {
-  clearInterval(metronome);
-  oscillatorGainNode.gain = 0;
-  oscillatorGainNode.disconnect();
-  metronome = undefined;
-};
-
-playButton.addEventListener("click", () => {
-  metronome = startMetronome();
-});
-
-stopButton.addEventListener("click", () => {
-  stopMetronome();
-});
+if (stopButton) {
+  stopButton.addEventListener("click", () => {
+    if (audioContext) {
+      metronome.stopMetronome();
+      metronome = undefined;
+      audioContext = undefined;
+    }
+  });
+}
