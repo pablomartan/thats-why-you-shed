@@ -1,5 +1,5 @@
 import MetronomeAudio from "./audio-context";
-import { Metronome, TimeSignature } from "./metronome";
+import { Metronome } from "./metronome";
 
 const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
 const playButton = document.querySelector(".play-button");
@@ -13,7 +13,7 @@ const init = () => {
   const metronomeAudio = new MetronomeAudio();
   const newMetronome = new Metronome({
     bpm,
-    timeSig: TimeSignature._44,
+    timeSig: "4/4",
     muteBars: 0,
     tickFunction: () => {
       metronomeAudio.tickSound();
