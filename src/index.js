@@ -1,43 +1,38 @@
-import MetronomeAudio from "./audio-context";
-import { Metronome } from "./metronome";
-
-const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
-const playButton = document.querySelector(".play-button");
-const stopButton = document.querySelector(".stop-button");
+import MetronomeAudio from "@/audio-context";
+import { Metronome } from "@/metronome";
 
 let audioContext;
 let metronome;
 
 const init = () => {
+  const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
   const bpm = (60 / Number(bpmInput.value)) * 1000;
-  const metronomeAudio = new MetronomeAudio();
-  const newMetronome = new Metronome({
+
+  audioContext = new MetronomeAudio();
+  metronome = new Metronome({
     bpm,
     timeSig: "4/4",
     muteBars: 0,
     tickFunction: () => {
-      metronomeAudio.tickSound();
+      audioContext.tickSound();
     },
     startFunction: () => {
-      metronomeAudio.tickSound();
+      audioContext.tickSound();
     },
     stopFunction: () => {
-      metronomeAudio.stop();
+      audioContext.stop();
     },
   });
-
-  audioContext = metronomeAudio;
-  metronome = newMetronome;
 };
 
-if (playButton) {
+document.addEventListener("DOMContentLoaded", () => {
+  const playButton = document.querySelector(".play-button");
+  const stopButton = document.querySelector(".stop-button");
   playButton.addEventListener("click", () => {
     init();
     metronome.startMetronome();
   });
-}
 
-if (stopButton) {
   stopButton.addEventListener("click", () => {
     if (audioContext) {
       metronome.stopMetronome();
@@ -45,4 +40,4 @@ if (stopButton) {
       audioContext = undefined;
     }
   });
-}
+});
