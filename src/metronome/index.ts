@@ -49,7 +49,10 @@ export class Metronome {
     muteBars,
     tickFunction,
     stopFunction,
-  }: Metronome) {
+  }: Pick<
+    Metronome,
+    "bpm" | "timeSig" | "stopFunction" | "muteBars" | "tickFunction"
+  >) {
     this.bpm = bpm;
     this.timeSig = timeSig;
     this.muteBars = muteBars;
