@@ -1,10 +1,14 @@
 import MetronomeAudio from "@/audio-context";
 import { Metronome } from "@/metronome";
 
-let audioContext;
-let metronome;
+let audioContext: MetronomeAudio;
+let metronome: Metronome;
 
 const init = () => {
+  if (metronome) {
+    return;
+  }
+
   const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
   const bpm = (60 / Number(bpmInput.value)) * 1000;
 
@@ -14,9 +18,6 @@ const init = () => {
     timeSig: "4/4",
     muteBars: 0,
     tickFunction: () => {
-      audioContext.tickSound();
-    },
-    startFunction: () => {
       audioContext.tickSound();
     },
     stopFunction: () => {

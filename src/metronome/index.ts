@@ -75,6 +75,10 @@ export class Metronome {
   }
 
   startMetronome() {
+    if (this.tickInterval || this.counterInterval) {
+      return;
+    }
+
     this.tickFunction();
     this.barCounter();
     this.counterInterval = setInterval(
