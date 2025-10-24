@@ -14,6 +14,9 @@ export default class MetronomeAudio {
 
     this.soundSource.start();
     this.gainNode.gain.value = 0;
+
+    this.tickSound = this.tickSound.bind(this);
+    this.stop = this.stop.bind(this);
   }
 
   stop() {

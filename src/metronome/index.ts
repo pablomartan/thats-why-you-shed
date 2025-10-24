@@ -6,8 +6,10 @@ type CompoundNumerators = (typeof COMPOUND_NUMERATORS)[number];
 
 type TimeSignatureNumerator = SimpleNumerators | CompoundNumerators;
 type TimeSignatureDenominator = "2" | "4" | "8" | "16";
+
 export type TimeSignature =
   `${TimeSignatureNumerator}/${TimeSignatureDenominator}`;
+
 type SimpleTimeSignature = `${SimpleNumerators}/${TimeSignatureDenominator}`;
 type CompoundTimeSignature =
   `${CompoundNumerators}/${Extract<TimeSignatureDenominator, "4" | "8" | "16">}`;
@@ -32,7 +34,7 @@ const isCompoundTimeSignature = (
   );
 };
 
-export class Metronome {
+export default class Metronome {
   bpm: number;
   timeSig: TimeSignature;
   muteBars: number | "random";
@@ -60,6 +62,9 @@ export class Metronome {
     this.currentPulse = 1;
     this.tickFunction = tickFunction;
     this.stopFunction = stopFunction;
+
+    this.barCounter = this.barCounter.bind(this);
+    this.startMetronome = this.startMetronome.bind(this);
   }
 
   barCounter() {
@@ -82,7 +87,7 @@ export class Metronome {
     this.tickFunction();
     this.barCounter();
     this.counterInterval = setInterval(
-      () => this.barCounter(),
+      this.barCounter,
       isCompoundTimeSignature(this.timeSig) ? this.bpm / 3 : this.bpm,
     );
     this.tickInterval = setInterval(() => this.tickFunction(), this.bpm);

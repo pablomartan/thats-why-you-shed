@@ -1,5 +1,5 @@
 import MetronomeAudio from "@/audio-context";
-import { Metronome } from "@/metronome";
+import Metronome from "@/metronome";
 
 let audioContext: MetronomeAudio;
 let metronome: Metronome;
@@ -17,18 +17,15 @@ const init = () => {
     bpm,
     timeSig: "4/4",
     muteBars: 0,
-    tickFunction: () => {
-      audioContext.tickSound();
-    },
-    stopFunction: () => {
-      audioContext.stop();
-    },
+    tickFunction: audioContext.tickSound,
+    stopFunction: audioContext.stop,
   });
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   const playButton = document.querySelector(".play-button");
   const stopButton = document.querySelector(".stop-button");
+
   playButton.addEventListener("click", () => {
     init();
     metronome.startMetronome();
