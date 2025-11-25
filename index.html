@@ -5,27 +5,19 @@
     <title>That's why you shed!</title>
 </head>
 <body>
-    <input type="number">
-    <select class="numerator">
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
-        <option>5</option>
-        <option>6</option>
-        <option>7</option>
-        <option>8</option>
-        <option>9</option>
-        <option>11</option>
-        <option>12</option>
+    <input type="number" class="c-bpm-input" placeholder="60">
+    <select class="c-time-signature-selector" name="time-signature-selector">
+        <option id="22">2/2</option>
+        <option id="24">2/4</option>
+        <option id="34">3/4</option>
+        <option id="44">4/4</option>
+        <option id="38">3/8</option>
+        <option id="68">6/8</option>
+        <option id="98">9/8</option>
+        <option id="128">12/8</option>
     </select>
-    <select class="denominator">
-        <option>2</option>
-        <option>4</option>
-        <option>8</option>
-        <option>16</option>
-    </select>
-    <button class="play-button">Play</button>
-    <button class="stop-button">Pause</button>
+    <button class="c-play-button">Play</button>
+    <button class="c-stop-button">Pause</button>
     <script type="module" src="./src/index.ts" />
 </body>
 </html>

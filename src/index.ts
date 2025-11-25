@@ -4,30 +4,31 @@ import Metronome, { TimeSignature } from "@/metronome";
 let audioContext: MetronomeAudio;
 let metronome: Metronome;
 
-const init = (timeSig: TimeSignature) => {
+const init = (timeSig: TimeSignature, muteBars: number) => {
   const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
-  const bpm = (60 / Number(bpmInput.value)) * 1000;
+  const bpmValue =
+    bpmInput.value !== "" ? bpmInput.value : bpmInput.placeholder;
+  const bpm = (60 / Number(bpmValue)) * 1000;
 
   audioContext = new MetronomeAudio();
   metronome = new Metronome({
     bpm,
     timeSig,
-    muteBars: 0,
+    muteBars,
     tickFunction: audioContext.tickSound,
     stopFunction: audioContext.stop,
   });
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const playButton = document.querySelector(".play-button");
-  const stopButton = document.querySelector(".stop-button");
-  const numerator = document.querySelector(".numerator") as HTMLSelectElement;
-  const denominator = document.querySelector(
-    ".denominator",
-  ) as HTMLSelectElement;
+  const playButton = document.querySelector(".c-play-button");
+  const stopButton = document.querySelector(".c-stop-button");
+  const timeSignatureSelect: HTMLSelectElement = document.querySelector(
+    ".c-time-signature-selector",
+  );
 
   playButton.addEventListener("click", () => {
-    init(`${numerator.value}/${denominator.value}` as TimeSignature);
+    init(timeSignatureSelect.value as TimeSignature, 2);
     metronome.startMetronome();
   });
 
