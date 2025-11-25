@@ -36,8 +36,8 @@ const isCompoundTimeSignature = (
 
 export default class Metronome {
   bpm: number;
-  timeSig: TimeSignature;
-  muteBars: number | "random";
+  private timeSig: TimeSignature;
+  muteBars: number;
   private currentBar: number;
   private currentPulse: number;
   private tickInterval: ReturnType<typeof setInterval>;
@@ -45,16 +45,7 @@ export default class Metronome {
   tickFunction: () => void;
   stopFunction: () => void;
 
-  constructor({
-    bpm,
-    timeSig,
-    muteBars,
-    tickFunction,
-    stopFunction,
-  }: Pick<
-    Metronome,
-    "bpm" | "timeSig" | "stopFunction" | "muteBars" | "tickFunction"
-  >) {
+  constructor({ bpm, timeSig, muteBars, tickFunction, stopFunction }) {
     this.bpm = bpm;
     this.timeSig = timeSig;
     this.muteBars = muteBars;
@@ -64,19 +55,22 @@ export default class Metronome {
     this.stopFunction = stopFunction;
 
     this.barCounter = this.barCounter.bind(this);
+    this.tickFunction = this.tickFunction.bind(this);
     this.startMetronome = this.startMetronome.bind(this);
   }
 
   barCounter() {
     const numerator = Number(this.timeSig.split("/").at(0));
 
-    const nextPulse = this.currentPulse % numerator;
-
-    if (nextPulse === 1) {
+    if (this.currentPulse % numerator === 1) {
       this.currentBar += 1;
     }
 
-    this.currentPulse = nextPulse + 1;
+    if (this.currentPulse % numerator === 0) {
+      this.currentPulse = 1;
+    } else {
+      this.currentPulse += 1;
+    }
   }
 
   startMetronome() {
@@ -84,13 +78,15 @@ export default class Metronome {
       return;
     }
 
+    // first tick inmmediately after play
     this.tickFunction();
     this.barCounter();
+
     this.counterInterval = setInterval(
       this.barCounter,
       isCompoundTimeSignature(this.timeSig) ? this.bpm / 3 : this.bpm,
     );
-    this.tickInterval = setInterval(() => this.tickFunction(), this.bpm);
+    this.tickInterval = setInterval(this.tickFunction, this.bpm);
   }
 
   stopMetronome() {
