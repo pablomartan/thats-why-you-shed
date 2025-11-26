@@ -31,11 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   playButton.addEventListener("click", () => {
-    init(
-      timeSignatureSelect.value as TimeSignature,
-      Number(muteBarSelect.value.split("").at(-1)) + 1,
-    );
-    metronome.startMetronome();
+    if (metronome === undefined) {
+      init(
+        timeSignatureSelect.value as TimeSignature,
+        Number(muteBarSelect.value.split("").at(-1)) + 1,
+      );
+      metronome.startMetronome();
+    }
   });
 
   stopButton.addEventListener("click", () => {
