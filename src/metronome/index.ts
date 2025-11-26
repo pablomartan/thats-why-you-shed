@@ -55,7 +55,13 @@ export default class Metronome {
     this.stopFunction = stopFunction;
 
     this.barCounter = this.barCounter.bind(this);
-    this.tickFunction = this.tickFunction.bind(this);
+    this.tickFunction = function () {
+      if (this.currentBar > 0 && this.currentBar % this.muteBars === 0) {
+        return;
+      }
+
+      tickFunction();
+    }.bind(this);
     this.startMetronome = this.startMetronome.bind(this);
   }
 
@@ -74,10 +80,6 @@ export default class Metronome {
   }
 
   startMetronome() {
-    if (this.tickInterval || this.counterInterval) {
-      return;
-    }
-
     // first tick inmmediately after play
     this.tickFunction();
     this.barCounter();

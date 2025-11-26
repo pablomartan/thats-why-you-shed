@@ -26,9 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const timeSignatureSelect: HTMLSelectElement = document.querySelector(
     ".c-time-signature-selector",
   );
+  const muteBarSelect: HTMLSelectElement = document.querySelector(
+    ".c-mute-bar-selector",
+  );
 
   playButton.addEventListener("click", () => {
-    init(timeSignatureSelect.value as TimeSignature, 2);
+    init(
+      timeSignatureSelect.value as TimeSignature,
+      Number(muteBarSelect.value.split("").at(-1)) + 1,
+    );
     metronome.startMetronome();
   });
 
