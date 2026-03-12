@@ -48,7 +48,7 @@ export default class Metronome {
   constructor({ bpm, timeSig, muteBars, tickFunction, stopFunction }) {
     this.bpm = bpm;
     this.timeSig = timeSig;
-    this.muteBars = muteBars;
+    this.muteBars = muteBars + 1;
     this.currentBar = 0;
     this.currentPulse = 1;
     this.tickFunction = tickFunction;

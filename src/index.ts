@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (metronome === undefined) {
       init(
         timeSignatureSelect.value as TimeSignature,
-        Number(muteBarSelect.value.split("").at(-1)) + 1,
+        Number(muteBarSelect.value.split("").at(-1)),
       );
       metronome.startMetronome();
     }
