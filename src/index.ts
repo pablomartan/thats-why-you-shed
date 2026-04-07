@@ -30,6 +30,20 @@ document.addEventListener("DOMContentLoaded", () => {
     ".c-mute-bar-selector",
   );
 
+  const numberInputs = document.querySelectorAll(
+    'input[type="number"]',
+  ) as NodeListOf<HTMLInputElement>;
+
+  numberInputs.forEach((input) => {
+    input.addEventListener("command", (event) => {
+      if (event.command === "--increment") {
+        input.stepUp();
+      } else if (event.command === "--decrement") {
+        input.stepDown();
+      }
+    });
+  });
+
   playButton.addEventListener("click", () => {
     if (metronome === undefined) {
       init(

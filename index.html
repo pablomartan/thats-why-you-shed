@@ -1,11 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="./index.css" >
     <title>That's why you shed!</title>
 </head>
 <body>
-    <input type="number" class="c-bpm-input" placeholder="60">
+  <div class="p-metronome">
+      <div class="c-bpm-input">
+          <button
+              class="c-bpm-input __control --dec"
+              commandfor="bpm-input"
+              command="--decrement"
+          >
+              -
+          </button>
+          <input
+            class="c-bpm-input __text-input"
+            name="bpm-input"
+            id="bpm-input"
+            type="number"
+            placeholder="60" />
+          <button
+              class="c-bpm-input __control --inc"
+              commandfor="bpm-input"
+              command="--increment"
+          >
+              +
+          </button>
+      </div>
+    <div class="time-signature-selector">
+    <label for="time-signature-selector">
+      Select time signature
+      </label>
     <select class="c-time-signature-selector" name="time-signature-selector">
         <option id="22">2/2</option>
         <option id="24">2/4</option>
@@ -16,14 +43,23 @@
         <option id="98">9/8</option>
         <option id="128">12/8</option>
     </select>
+    </div>
+    <div class="c-button-group">
     <button class="c-play-button">Play</button>
     <button class="c-stop-button">Pause</button>
-    <select class="c-mute-bar-selector">
+    </div>
+    <div class="mute-bar-selector">
+    <label for="mute-bar-selector">
+      Mute every <i>n</i> bars:
+    </label>
+    <select name="mute-bar-selector" class="c-mute-bar-selector">
         <option id="mute1">1</option>
         <option id="mute2">2</option>
         <option id="mute3">3</option>
         <option id="mute4">4</option>
     </select>
+    </div>
+    </div>
     <script type="module" src="./src/index.ts"></script>
 </body>
 </html>
