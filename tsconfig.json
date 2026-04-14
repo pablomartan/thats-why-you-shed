@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": "./",
         "paths": {
-            "@/*": [ "./src/*" ],
+            "@/*": [ "./src/*" ]
         },
         "target": "ESNext",
         "lib": [
@@ -14,6 +14,6 @@
         "nonNullableAssertion": true,
         "noEmit": true,
         "module": "ESNext",
-        "moduleResolution": "bundler",
+        "moduleResolution": "bundler"
     }
 }
