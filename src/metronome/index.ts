@@ -37,7 +37,7 @@ const isCompoundTimeSignature = (
 export default class Metronome {
   bpm: number;
   private timeSig: TimeSignature;
-  muteBars: number;
+  muteBars: boolean;
   private currentBar: number;
   private currentPulse: number;
   private tickInterval: ReturnType<typeof setInterval>;
@@ -48,7 +48,7 @@ export default class Metronome {
   constructor({ bpm, timeSig, muteBars, tickFunction, stopFunction }) {
     this.bpm = bpm;
     this.timeSig = timeSig;
-    this.muteBars = muteBars + 1;
+    this.muteBars = muteBars;
     this.currentBar = 0;
     this.currentPulse = 1;
     this.tickFunction = tickFunction;
@@ -56,7 +56,7 @@ export default class Metronome {
 
     this.barCounter = this.barCounter.bind(this);
     this.tickFunction = function () {
-      if (this.currentBar > 0 && this.currentBar % this.muteBars === 0) {
+      if (this.muteBars && this.currentBar > 0 && this.currentBar % 2 === 0) {
         return;
       }
 

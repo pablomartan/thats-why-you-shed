@@ -4,7 +4,7 @@ import Metronome, { TimeSignature } from "@/metronome";
 let audioContext: MetronomeAudio;
 let metronome: Metronome;
 
-const init = (timeSig: TimeSignature, muteBars: number) => {
+const init = (timeSig: TimeSignature, muteBars: boolean) => {
   const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
   const bpmValue =
     bpmInput.value !== "" ? bpmInput.value : bpmInput.placeholder;
@@ -21,7 +21,7 @@ const init = (timeSig: TimeSignature, muteBars: number) => {
 };
 
 interface CustomCommandEvent extends Event {
-    command: "--increment" | "--decrement";
+  command: "--increment" | "--decrement";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const timeSignatureSelect: HTMLSelectElement = document.querySelector(
     ".c-time-signature-selector",
   );
-  const muteBarSelect: HTMLSelectElement = document.querySelector(
+  const muteBarCheckbox: HTMLInputElement = document.querySelector(
     ".c-mute-bar-selector",
   );
 
@@ -50,10 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   playButton.addEventListener("click", () => {
     if (metronome === undefined) {
-      init(
-        timeSignatureSelect.value as TimeSignature,
-        Number(muteBarSelect.value.split("").at(-1)),
-      );
+      init(timeSignatureSelect.value as TimeSignature, muteBarCheckbox.checked);
       metronome.startMetronome();
     }
   });
