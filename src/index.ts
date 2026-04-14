@@ -20,6 +20,10 @@ const init = (timeSig: TimeSignature, muteBars: number) => {
   });
 };
 
+interface CustomCommandEvent extends Event {
+    command: "--increment" | "--decrement";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const playButton = document.querySelector(".c-play-button");
   const stopButton = document.querySelector(".c-stop-button");
@@ -35,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ) as NodeListOf<HTMLInputElement>;
 
   numberInputs.forEach((input) => {
-    input.addEventListener("command", (event) => {
+    input.addEventListener("command", (event: CustomCommandEvent) => {
       if (event.command === "--increment") {
         input.stepUp();
       } else if (event.command === "--decrement") {
