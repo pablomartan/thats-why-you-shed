@@ -30,4 +30,8 @@ export default class TimeSignature {
   isCompound() {
     return this.numerator > 3 && this.numerator % 3 === 0;
   }
+
+  toString() {
+    return `${this.numerator}/${this.denominator}`;
+  }
 }

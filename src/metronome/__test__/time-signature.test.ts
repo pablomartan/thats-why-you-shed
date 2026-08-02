@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import TimeSignature from "../time-signature";
+import TimeSignature from "@/metronome/time-signature";
 
 describe("TimeSignature", () => {
   it("When calling the constructor, it returns a new object with all public properties accessible", () => {
@@ -35,5 +35,13 @@ describe("TimeSignature", () => {
         expect(ts.isCompound()).toBeTruthy();
       },
     );
+  });
+
+  it("When calling TimeSignature.toString(), it returns the correct time signature string", () => {
+    const tsString = "6/8";
+
+    const ts = TimeSignature.from(tsString);
+
+    expect(ts.toString()).toEqual(tsString);
   });
 });
