@@ -1,99 +1,66 @@
-const SIMPLE_NUMERATORS = ["2", "3", "4"] as const;
-const COMPOUND_NUMERATORS = ["6", "9", "12"] as const;
+import TimeSignature, { TimeSignatureFromParam } from "./time-signature";
 
-type SimpleNumerators = (typeof SIMPLE_NUMERATORS)[number];
-type CompoundNumerators = (typeof COMPOUND_NUMERATORS)[number];
-
-type TimeSignatureNumerator = SimpleNumerators | CompoundNumerators;
-type TimeSignatureDenominator = "2" | "4" | "8" | "16";
-
-export type TimeSignature =
-  `${TimeSignatureNumerator}/${TimeSignatureDenominator}`;
-
-type SimpleTimeSignature = `${SimpleNumerators}/${TimeSignatureDenominator}`;
-type CompoundTimeSignature =
-  `${CompoundNumerators}/${Extract<TimeSignatureDenominator, "4" | "8" | "16">}`;
-
-const isSimpleTimeSignature = (
-  timeSignature: TimeSignature,
-): timeSignature is SimpleTimeSignature => {
-  const numerator = timeSignature.split("/").at(0);
-
-  return SIMPLE_NUMERATORS.some(
-    (compoundNumerator) => compoundNumerator === numerator,
-  );
-};
-
-const isCompoundTimeSignature = (
-  timeSignature: TimeSignature,
-): timeSignature is CompoundTimeSignature => {
-  const numerator = timeSignature.split("/").at(0);
-
-  return COMPOUND_NUMERATORS.some(
-    (compoundNumerator) => compoundNumerator === numerator,
-  );
-};
-
-export default class Metronome {
+class Metronome {
   bpm: number;
-  private timeSig: TimeSignature;
+  timeSignature: TimeSignature;
   muteBars: boolean;
-  private currentBar: number;
-  private currentPulse: number;
-  private tickInterval: ReturnType<typeof setInterval>;
-  private counterInterval: ReturnType<typeof setInterval>;
-  tickFunction: () => void;
-  stopFunction: () => void;
 
-  constructor({ bpm, timeSig, muteBars, tickFunction, stopFunction }) {
+  constructor(
+    bpm: number = 60,
+    timeSignature: TimeSignatureFromParam = "4/4",
+    muteBars: boolean = false,
+  ) {
+    if (isNaN(Number(bpm))) {
+      throw new TypeError(
+        "Trying to initialize metronome with invalid bpm param: " + bpm,
+      );
+    }
+
+    if (muteBars.toString() !== "true" && muteBars.toString() !== "false") {
+      throw new TypeError(
+        "Trying to initialize metronome with invalid mute bars param: " +
+          muteBars,
+      );
+    }
+
     this.bpm = bpm;
-    this.timeSig = timeSig;
+    this.timeSignature = TimeSignature.from(timeSignature);
     this.muteBars = muteBars;
-    this.currentBar = 0;
-    this.currentPulse = 1;
-    this.tickFunction = tickFunction;
-    this.stopFunction = stopFunction;
-
-    this.barCounter = this.barCounter.bind(this);
-    this.tickFunction = function () {
-      if (this.muteBars && this.currentBar > 0 && this.currentBar % 2 === 0) {
-        return;
-      }
-
-      tickFunction();
-    }.bind(this);
-    this.startMetronome = this.startMetronome.bind(this);
   }
 
-  barCounter() {
-    const numerator = Number(this.timeSig.split("/").at(0));
+  beatDuration() {
+    const base = 60 / this.bpm;
 
-    if (this.currentPulse % numerator === 1) {
-      this.currentBar += 1;
+    return this.timeSignature.isCompound() ? base / 3 : base;
+  }
+
+  getPulseFromBeatIndex(idx: number) {
+    return (idx % this.timeSignature.numerator) + 1;
+  }
+
+  getBarFromBeatIndex(idx: number) {
+    return Math.floor(idx / this.timeSignature.numerator) + 1;
+  }
+
+  isMuteBar(bar: number) {
+    return this.muteBars && bar > 0 && bar % (Number(this.muteBars) + 1) === 0;
+  }
+
+  updateMuteBars(checked: boolean) {
+    this.muteBars = checked;
+  }
+
+  updateBpm(bpm: number) {
+    if (isNaN(bpm)) {
+      return;
     }
 
-    if (this.currentPulse % numerator === 0) {
-      this.currentPulse = 1;
-    } else {
-      this.currentPulse += 1;
-    }
+    this.bpm = bpm;
   }
 
-  startMetronome() {
-    // first tick inmmediately after play
-    this.tickFunction();
-    this.barCounter();
-
-    this.counterInterval = setInterval(
-      this.barCounter,
-      isCompoundTimeSignature(this.timeSig) ? this.bpm / 3 : this.bpm,
-    );
-    this.tickInterval = setInterval(this.tickFunction, this.bpm);
-  }
-
-  stopMetronome() {
-    this.stopFunction();
-    clearInterval(this.tickInterval);
-    clearInterval(this.counterInterval);
+  updateTimeSignature(timeSignature: TimeSignatureFromParam) {
+    this.timeSignature = TimeSignature.from(timeSignature);
   }
 }
+
+export default Metronome;

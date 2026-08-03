@@ -1,30 +1,12 @@
-import MetronomeAudio from "@/audio-context";
-import Metronome, { TimeSignature } from "@/metronome";
-
-let audioContext: MetronomeAudio;
-let metronome: Metronome;
-
-const init = (timeSig: TimeSignature, muteBars: boolean) => {
-  const bpmInput = Array.from(document.getElementsByTagName("input"))[0];
-  const bpmValue =
-    bpmInput.value !== "" ? bpmInput.value : bpmInput.placeholder;
-  const bpm = (60 / Number(bpmValue)) * 1000;
-
-  audioContext = new MetronomeAudio();
-  metronome = new Metronome({
-    bpm,
-    timeSig,
-    muteBars,
-    tickFunction: audioContext.tickSound,
-    stopFunction: audioContext.stop,
-  });
-};
+import Metronome from "./metronome";
+import { TimeSignatureFromParam } from "./metronome/time-signature";
+import Scheduler from "./scheduler";
 
 interface CustomCommandEvent extends Event {
   command: "--increment" | "--decrement";
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+export function getElements() {
   const playButton = document.querySelector(".c-play-button");
   const stopButton = document.querySelector(".c-stop-button");
   const timeSignatureSelect: HTMLSelectElement = document.querySelector(
@@ -34,32 +16,83 @@ document.addEventListener("DOMContentLoaded", () => {
     ".c-mute-bar-selector",
   );
 
-  const numberInputs = document.querySelectorAll(
-    'input[type="number"]',
-  ) as NodeListOf<HTMLInputElement>;
+  const bpmInput: HTMLInputElement = document.querySelector("#bpm-input");
 
-  numberInputs.forEach((input) => {
-    input.addEventListener("command", (event: CustomCommandEvent) => {
-      if (event.command === "--increment") {
-        input.stepUp();
-      } else if (event.command === "--decrement") {
-        input.stepDown();
-      }
-    });
-  });
+  return {
+    playButton,
+    stopButton,
+    timeSignatureSelect,
+    muteBarCheckbox,
+    bpmInput,
+  };
+}
 
-  playButton.addEventListener("click", () => {
-    if (metronome === undefined) {
-      init(timeSignatureSelect.value as TimeSignature, muteBarCheckbox.checked);
-      metronome.startMetronome();
+export function wireUi(
+  elements: ReturnType<typeof getElements>,
+  metronome: Metronome,
+  scheduler: Scheduler,
+) {
+  /* Number Input */
+  // add custom buttons
+  elements.bpmInput.addEventListener("command", (event: CustomCommandEvent) => {
+    if (event.command === "--increment") {
+      elements.bpmInput.stepUp();
+    } else if (event.command === "--decrement") {
+      elements.bpmInput.stepDown();
     }
   });
 
-  stopButton.addEventListener("click", () => {
-    if (audioContext) {
-      metronome.stopMetronome();
-      metronome = undefined;
-      audioContext = undefined;
-    }
+  // update bpm on change
+  elements.bpmInput.addEventListener("change", (e: Event) => {
+    const target = e.target as HTMLInputElement;
+
+    metronome.updateBpm(Number(target.value));
   });
-});
+
+  // update mute bars on change
+  elements.muteBarCheckbox.addEventListener("change", (e: Event) => {
+    const target = e.target as HTMLInputElement;
+
+    metronome.updateMuteBars(target.checked);
+  });
+
+  // update time signature on change
+  elements.timeSignatureSelect.addEventListener("change", (e: Event) => {
+    const target = e.target as HTMLInputElement;
+
+    metronome.updateTimeSignature(target.value as TimeSignatureFromParam);
+  });
+
+  elements.playButton.addEventListener("click", (e: Event) => {
+    e.preventDefault();
+
+    scheduler.start();
+  });
+
+  elements.stopButton.addEventListener("click", (e: Event) => {
+    e.preventDefault();
+
+    scheduler.stop();
+  });
+}
+
+export function init() {
+  const elements = getElements();
+  const { bpmInput, muteBarCheckbox, timeSignatureSelect } = elements;
+
+  const metronome = new Metronome(
+    Number(bpmInput.value),
+    timeSignatureSelect.value as TimeSignatureFromParam,
+    muteBarCheckbox.checked,
+  );
+
+  const scheduler = new Scheduler(metronome);
+
+  wireUi(elements, metronome, scheduler);
+}
+
+if (process.env.NODE_ENV !== "test") {
+  document.addEventListener("DOMContentLoaded", () => {
+    init();
+  });
+}

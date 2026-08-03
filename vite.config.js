@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -7,6 +8,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": process.cwd() + "/src/",
+    },
+  },
+  test: {
+    coverage: {
+      include: ["src/**/*.ts"],
     },
   },
 });
