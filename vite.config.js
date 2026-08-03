@@ -10,4 +10,9 @@ export default defineConfig({
       "@": process.cwd() + "/src/",
     },
   },
+  test: {
+    coverage: {
+      include: ["src/**/*.ts"],
+    },
+  },
 });
